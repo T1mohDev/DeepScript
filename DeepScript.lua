@@ -1,4 +1,4 @@
--- DeepScript v5.0: Одно меню + Text Notifications
+-- DeepScript v6.0 (Hardcore Style)
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
 local UserInputService = game:GetService("UserInputService")
@@ -6,59 +6,46 @@ local UserInputService = game:GetService("UserInputService")
 local player = Players.LocalPlayer
 local gui = player:WaitForChild("PlayerGui")
 
--- ОСНОВНОЙ УЛЬТРА-ЧИСТЫЙ МЕНЮ
+-- Basic Menu Frame
 local screen = Instance.new("ScreenGui")
-screen.Name = "DeepScript v5.0"
+screen.Name = "DeepScript v6.0"
 screen.ResetOnSpawn = false
 screen.Parent = gui
-screen.Enabled = false -- Меню скрыто по умолчанию
+screen.Enabled = true
 
--- ДРАГАБЕЛЬНЫЙ ФРЕЙМ
 local frame = Instance.new("Frame")
 frame.Size = UDim2.new(0, 400, 0, 500)
 frame.Position = UDim2.new(0.5, -200, 0.5, -250)
-frame.BackgroundColor3 = Color3.fromRGB(10, 10, 10)
+frame.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
 frame.BorderSizePixel = 0
-frame.BackgroundTransparency = 0.3
+frame.BackgroundTransparency = 0
 frame.Active = true
 frame.Draggable = true
 frame.Parent = screen
 
--- ГРАДИЕНТ
-local gradient = Instance.new("UIGradient")
-gradient.Rotation = 45
-gradient.Color = ColorSequence.new{
-	ColorSequenceKeypoint.new(0, Color3.fromRGB(20, 20, 30)),
-	ColorSequenceKeypoint.new(1, Color3.fromRGB(0, 0, 0))
-}
-gradient.Parent = frame
-
--- ТИТУЛ
+-- Title
 local title = Instance.new("TextLabel")
 title.Size = UDim2.new(1, 0, 0, 50)
-title.Position = UDim2.new(0, 0, 0, 0)
 title.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-title.BackgroundTransparency = 0.5
-title.Text = "DeepScript v5.0"
+title.Text = "DeepScript v6.0"
 title.Font = Enum.Font.GothamBold
 title.FontSize = Enum.FontSize.Size24
 title.TextColor3 = Color3.fromRGB(255, 215, 0)
 title.Parent = frame
 
--- АВТОМАТИЧЕСКИЙ УВЕДОМЛЕНИЕ
-local function showNotification(message, isOff)
-	-- 만약 포인터 (эхо) 또는 유용한 텍스트 라벨
+-- Notification
+local function showNotification(text, isOff)
 	local notification = Instance.new("TextLabel")
 	notification.Size = UDim2.new(0, 100, 0, 40)
 	notification.Position = UDim2.new(0.5, -50, 1, -50)
-	notification.Text = message
+	notification.Text = text
 	notification.Font = Enum.Font.GothamBold
 	notification.TextColor3 = isOff and Color3.fromRGB(255, 100, 100) or Color3.fromRGB(100, 255, 100)
 	notification.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
 	notification.BackgroundTransparency = 0.5
 	notification.Parent = frame
 
-	-- 이동 애니메이션
+	-- move
 	local tween = game:GetService("TweenService"):Create(
 		notification,
 		TweenInfo.new(0.5),
@@ -66,7 +53,6 @@ local function showNotification(message, isOff)
 	)
 	tween:Play()
 
-	-- Обработка 시간
 	task.wait(2)
 	tween = game:GetService("TweenService"):Create(
 		notification,
@@ -78,13 +64,39 @@ local function showNotification(message, isOff)
 	notification:Destroy()
 end
 
--- ФУНКЦИИ МЕХАНИКИ
+-- Buttons
+local function createButton(text, yPos, callback)
+	local button = Instance.new("TextButton")
+	button.Size = UDim2.new(0.9, 0, 0, 40)
+	button.Position = UDim2.new(0.05, 0, 0, yPos)
+	button.Text = text
+	button.Font = Enum.Font.GothamBold
+	button.TextColor3 = Color3.fromRGB(255, 255, 255)
+	button.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+	button.BorderSizePixel = 0
+	button.Parent = frame
+	button.MouseButton1Click:Connect(callback)
+
+	local result = Instance.new("TextLabel")
+	result.Size = UDim2.new(0, 40, 0, 40)
+	result.Position = UDim2.new(1, -45, 0, 0)
+	result.Text = ""
+	result.BackgroundTransparency = 1
+	result.Font = Enum.Font.GothamBold
+	result.TextColor3 = Color3.fromRGB(255, 255, 255)
+	result.Parent = button
+
+	return button, result
+end
+
+-- Vars
 local flyEnabled = false
 local noclipEnabled = false
 local godModeEnabled = false
 local invisibleEnabled = false
 local speedEnabled = false
 
+-- Functions
 local function updateFly()
 	local hrp = player.Character and player.Character:FindFirstChild("HumanoidRootPart")
 	local hum = player.Character and player.Character:FindFirstChildWhichIsA("Humanoid")
@@ -139,42 +151,8 @@ local function updateSpeed()
 	end
 end
 
--- КНОПКИ МЕНЮ
-local function createButton(text, icon, yPos, callback)
-	local button = Instance.new("TextButton")
-	button.Size = UDim2.new(0.9, 0, 0, 40)
-	button.Position = UDim2.new(0.05, 0, 0, yPos)
-	button.Text = icon .. " " .. text
-	button.Font = Enum.Font.GothamBold
-	button.TextColor3 = Color3.fromRGB(255, 255, 255)
-	button.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
-	button.BackgroundTransparency = 0
-	button.BorderSizePixel = 0
-	button.Parent = frame
-	button.MouseButton1Click:Connect(callback)
-
-	local buttonGradient = Instance.new("UIGradient")
-	buttonGradient.Rotation = 45
-	buttonGradient.Color = ColorSequence.new{
-		ColorSequenceKeypoint.new(0, Color3.fromRGB(60, 60, 60)),
-		ColorSequenceKeypoint.new(1, Color3.fromRGB(20, 20, 20))
-	}
-	buttonGradient.Parent = button
-
-	local result = Instance.new("TextLabel")
-	result.Size = UDim2.new(0, 40, 0, 40)
-	result.Position = UDim2.new(1, -45, 0, 0)
-	result.Text = ""
-	result.BackgroundTransparency = 1
-	result.Font = Enum.Font.GothamBold
-	result.TextColor3 = Color3.fromRGB(255, 255, 255)
-	result.Parent = button
-
-	return button, result
-end
-
--- Кнопки
-local flyBtn, flyResult = createButton("Fly", "✈️", 50, function()
+-- Buttons
+local flyBtn, flyResult = createButton("Fly", 50, function()
 	flyEnabled = not flyEnabled
 	updateFly()
 	flyResult.Text = flyEnabled and "ON" or "OFF"
@@ -182,7 +160,7 @@ local flyBtn, flyResult = createButton("Fly", "✈️", 50, function()
 	showNotification(flyEnabled and "Fly Включено" or "Fly Выключено", not flyEnabled)
 end)
 
-local noclipBtn, noclipResult = createButton("NoClip", "👻", 100, function()
+local noclipBtn, noclipResult = createButton("NoClip", 100, function()
 	noclipEnabled = not noclipEnabled
 	updateNoclip()
 	noclipResult.Text = noclipEnabled and "ON" or "OFF"
@@ -190,7 +168,7 @@ local noclipBtn, noclipResult = createButton("NoClip", "👻", 100, function()
 	showNotification(noclipEnabled and "NoClip Включено" or "NoClip Выключено", not noclipEnabled)
 end)
 
-local godBtn, godResult = createButton("God Mode", "🧊", 150, function()
+local godBtn, godResult = createButton("God Mode", 150, function()
 	godModeEnabled = not godModeEnabled
 	updateGodMode()
 	godResult.Text = godModeEnabled and "ON" or "OFF"
@@ -198,7 +176,7 @@ local godBtn, godResult = createButton("God Mode", "🧊", 150, function()
 	showNotification(godModeEnabled and "God Mode Включено" or "God Mode Выключено", not godModeEnabled)
 end)
 
-local invisibleBtn, invisibleResult = createButton("Invisible", "👁️", 200, function()
+local invisibleBtn, invisibleResult = createButton("Invisible", 200, function()
 	invisibleEnabled = not invisibleEnabled
 	updateInvisible()
 	invisibleResult.Text = invisibleEnabled and "ON" or "OFF"
@@ -206,7 +184,7 @@ local invisibleBtn, invisibleResult = createButton("Invisible", "👁️", 200, 
 	showNotification(invisibleEnabled and "Invisible Включено" or "Invisible Выключено", not invisibleEnabled)
 end)
 
-local speedBtn, speedResult = createButton("Speed", "🏎️", 250, function()
+local speedBtn, speedResult = createButton("Speed", 250, function()
 	speedEnabled = not speedEnabled
 	updateSpeed()
 	speedResult.Text = speedEnabled and "ON" or "OFF"
@@ -214,32 +192,7 @@ local speedBtn, speedResult = createButton("Speed", "🏎️", 250, function()
 	showNotification(speedEnabled and "Speed Включено" or "Speed Выключено", not speedEnabled)
 end)
 
--- СЛЕДУЮЩАЯ КНОПКА ТЕЛЕПОРТ
-local teleportBtn, teleportResult = createButton("Teleport to Target", "🧲", 330, function()
-	local hrp = player.Character and player.Character:FindFirstChild("HumanoidRootPart")
-	local targetHrp = targetPlayer.Character and targetPlayer.Character:FindFirstChild("HumanoidRootPart")
-	if hrp and targetHrp then
-		hrp.CFrame = targetHrp.CFrame
-	end
-	teleportResult.Text = "DONE"
-	teleportResult.TextColor3 = Color3.fromRGB(255, 255, 255)
-	showNotification("Teleport Done", false)
-end)
-
--- ПОДОЖДИ, ТЕЛЕПОРТ К ЦЕЛИ
-local teleportBtn2, teleportResult2 = createButton("Teleport to Target (Boost)", "🧲", 370, function()
-	local hrp = player.Character and player.Character:FindFirstChild("HumanoidRootPart")
-	local targetHrp = targetPlayer.Character and targetPlayer.Character:FindFirstChild("HumanoidRootPart")
-	if hrp and targetHrp then
-		hrp.CFrame = targetHrp.CFrame
-		hrp.Velocity = Vector3.new(0, 50, 0)
-	end
-	teleportResult2.Text = "DONE"
-	teleportResult2.TextColor3 = Color3.fromRGB(255, 255, 255)
-	showNotification("Teleport Boost Done", false)
-end)
-
--- КНОПКА ДЛЯ ВЫБОРА ЦЕЛИ
+-- Player list
 local listButton = Instance.new("TextButton")
 listButton.Size = UDim2.new(0.9, 0, 0, 40)
 listButton.Position = UDim2.new(0.05, 0, 0, 290)
@@ -252,7 +205,7 @@ listButton.Parent = frame
 listButton.MouseButton1Click:Connect(function()
 	listButton.Visible = false
 	listButton.Parent = frame
-	-- По-прежнему нужен список
+	-- List
 	local list = Instance.new("ScrollingFrame")
 	list.Size = UDim2.new(0.9, 0, 0.5, 0)
 	list.Position = UDim2.new(0.05, 0, 0.6, 0)
@@ -276,7 +229,47 @@ listButton.MouseButton1Click:Connect(function()
 	end
 end)
 
--- УПРАВЛЕНИЕ FLY
+-- Teleport
+local teleportBtn, teleportResult = createButton("Teleport to Target", 330, function()
+	local hrp = player.Character and player.Character:FindFirstChild("HumanoidRootPart")
+	local targetHrp = targetPlayer.Character and targetPlayer.Character:FindFirstChild("HumanoidRootPart")
+	if hrp and targetHrp then
+		hrp.CFrame = targetHrp.CFrame
+	end
+	teleportResult.Text = "DONE"
+	teleportResult.TextColor3 = Color3.fromRGB(255, 255, 255)
+	showNotification("Teleport Done", false)
+end)
+
+-- Teleport Boost
+local teleportBtn2, teleportResult2 = createButton("Teleport to Target (Boost)", 370, function()
+	local hrp = player.Character and player.Character:FindFirstChild("HumanoidRootPart")
+	local targetHrp = targetPlayer.Character and targetPlayer.Character:FindFirstChild("HumanoidRootPart")
+	if hrp and targetHrp then
+		hrp.CFrame = targetHrp.CFrame
+		hrp.Velocity = Vector3.new(0, 50, 0)
+	end
+	teleportResult2.Text = "DONE"
+	teleportResult2.TextColor3 = Color3.fromRGB(255, 255, 255)
+	showNotification("Teleport Boost Done", false)
+end)
+
+-- Toggle Menu
+local function toggleMenu()
+	screen.Enabled = not screen.Enabled
+	if screen.Enabled then
+		frame.Visible = true
+	end
+end
+
+-- UserInputService
+UserInputService.InputBegan:Connect(function(input)
+	if input.KeyCode == Enum.KeyCode.Insert then
+		toggleMenu()
+	end
+end)
+
+-- Fly
 UserInputService.InputBegan:Connect(function(input)
 	if flyEnabled and player.Character then
 		local hrp = player.Character:FindFirstChild("HumanoidRootPart")
@@ -290,7 +283,7 @@ UserInputService.InputBegan:Connect(function(input)
 	end
 end)
 
--- СТОП ДВИЖЕНИЕ (СТАБИЛЬНЫЙ ФЛАЙ)
+-- Aeroplane mode
 RunService.Heartbeat:Connect(function()
 	if flyEnabled and player.Character then
 		local hrp = player.Character:FindFirstChild("HumanoidRootPart")
@@ -299,23 +292,5 @@ RunService.Heartbeat:Connect(function()
 				hrp.Velocity = Vector3.new(0, 0, 50)
 			end
 		end
-	end
-end)
-
--- ПРОВЕРКА ВЫБОРА КНОПКИ ТЕЛЕПОРТ
-local targetPlayer = nil
-
--- МЕНЮ - ДВИЖЕНИЕ
-local function toggleMenu()
-	screen.Enabled = not screen.Enabled
-	if screen.Enabled then
-		frame.Visible = true
-	end
-end
-
--- KEY INSERT
-UserInputService.InputBegan:Connect(function(input)
-	if input.KeyCode == Enum.KeyCode.Insert then
-		toggleMenu()
 	end
 end)
